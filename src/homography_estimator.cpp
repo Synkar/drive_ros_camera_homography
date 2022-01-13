@@ -75,8 +75,6 @@ void HomographyEstimator::initParameters() {
     return;
 }
 
-
-
 // compute pattern points based on pattern, size, offset, ...
 void HomographyEstimator::computePatternPoints()
 {
@@ -117,8 +115,6 @@ void HomographyEstimator::camInfoCb(const sensor_msgs::CameraInfo& info){
     }
 }
 
-
-
 void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
 {
 
@@ -150,14 +146,15 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
   }
 
   // don't undistort image
-  if(camera_model_.distortionCoeffs().empty())
+  /*if(camera_model_.distortionCoeffs().empty())
   {
-        img = cv_ptr->image;  // we dont need to be fast here
+      img = cv_ptr->image;  // we dont need to be fast here
   // undistort image
   }else{
       cv::undistort(cv_ptr->image, img, camera_model_.intrinsicMatrix(), camera_model_.distortionCoeffs());
-  }
-  cv::Rect ROI(0, (480/2), 848, (480/2)); //replace by image parameters
+  }*/
+  img = cv_ptr->image;
+  cv::Rect ROI(0, (img.rows/2), img.cols, (img.rows/2));
   img = img(ROI);
 
   // copy image to draw in it
@@ -230,7 +227,6 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
           if(computeRefinement(detectedPoints)){
               // Compute Final homography (cam2world)
               cam2world = refinement * estimate;
-
               world2cam = cam2world.inv();
               ROS_INFO_STREAM("cam2world" << cam2world);
               ROS_INFO_STREAM("world2cam" << world2cam);
@@ -241,6 +237,9 @@ void HomographyEstimator::imageCb(const sensor_msgs::ImageConstPtr& msg)
               cv::Mat topView;
               cv::warpPerspective(img, topView, topView2cam.inv(), topViewSize);
               cv::imshow("homography_estimator_preview", topView);
+              cv::Mat original;
+              cv::warpPerspective(topView, original, topView2cam, topViewSize);
+              cv::imshow("reconstruction", original);
 
               // Save to file
               saveHomography();
@@ -315,7 +314,7 @@ cv::SimpleBlobDetector::Params HomographyEstimator::getBlobDetectorParams()
 void HomographyEstimator::computeTopView()
 {
     // Choose top-view image size
-    topViewSize = cv::Size(848, 240); //width height
+    topViewSize = cv::Size(848, 240);
 
     // Choose corner points (in real-world coordinates)
     std::vector<cv::Point2f> coordinates;
@@ -323,10 +322,10 @@ void HomographyEstimator::computeTopView()
     coordinates.emplace_back(0, 1.500);
     coordinates.emplace_back(3.000, -1.500);
     coordinates.emplace_back(3.000, 1.500);*/
-    coordinates.emplace_back(0, -3.000);
-    coordinates.emplace_back(0, 3.000);
-    coordinates.emplace_back(6.000, -3.000);
-    coordinates.emplace_back(6.000, 3.000);
+    coordinates.emplace_back(0, -4.5);
+    coordinates.emplace_back(0, 4.5);
+    coordinates.emplace_back(9, -4.5);
+    coordinates.emplace_back(9, 4.5);
 
     std::vector<cv::Point2f> pixels;
     pixels.emplace_back(0, topViewSize.height);
@@ -350,9 +349,6 @@ bool HomographyEstimator::computeRefinement(const std::vector<cv::Point2f> detec
     return true;
 }
 
-
-
-
 bool HomographyEstimator::findPoints(const cv::Mat& img, std::vector<cv::Point2f>& points)
 {
     bool success = false;
@@ -369,10 +365,6 @@ bool HomographyEstimator::findPoints(const cv::Mat& img, std::vector<cv::Point2f
     }
     return success;
 }
-
-
-
-
 
 void HomographyEstimator::saveHomography()
 {
