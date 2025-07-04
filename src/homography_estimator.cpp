@@ -13,11 +13,11 @@ HomographyEstimator::HomographyEstimator(const ros::NodeHandle nh, const ros::No
 {
 
   // check if camera info is set
-  std::string cam_info = pnh_.param<std::string>("camera_info", "");
+  std::string cam_info = pnh_.param<std::string>("camera_info", "/sensors/cameras/front_depth/color/camera_info");
 
 
   // subscribe to topics
-  image_sub_ = it_.subscribe("img_in", 1, &HomographyEstimator::imageCb, this);
+  image_sub_ = it_.subscribe("/sensors/cameras/front_depth/color/image_rect", 1, &HomographyEstimator::imageCb, this);
 
   if(cam_info.empty()){
       calLoaded = true;
