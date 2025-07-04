@@ -11,6 +11,19 @@ estimates [homography](https://en.wikipedia.org/wiki/Homography_(computer_vision
 6. adjust parameters of blob detector until all pattern marks are recognized
 7. parameter file will be saved to the directory specified in `homography_estimator.launch` file
 
+## Running on Docker
+A Docker container was created to run the system and configured to listen to the front camera topics of the robot. After cloning the repository, build the Docker image with:
+
+```bash
+docker build -f scripts/Dockerfile -t knowledgebase.datah.com.br:5000/synkar/delivery/autonomy:homography-0.0.1 .
+```
+
+Then, run the system with:
+
+```bash
+./scripts/run_homography.sh
+```
+
 ## parameters
 - pattern type (supported: `chessboard`, `circles`, `circles_asymmetric`)
 - estimated points for homography `p_{bot|top}_{right|left}_{x|y}` (border of green lines in `homography_estimator_input` image)
