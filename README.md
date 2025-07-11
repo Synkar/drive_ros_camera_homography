@@ -18,6 +18,12 @@ A Docker container was created to run the system and configured to listen to the
 docker build -f scripts/Dockerfile -t knowledgebase.datah.com.br:5000/synkar/delivery/autonomy:homography-0.0.1 .
 ```
 
+Don't forget to export the ROS_MASTER_URI environment variable with the robot's configuration (if you're setting this up on the real robot). As an example, for robot 23:
+
+```bash
+export ROS_MASTER_URI=http://10.0.2.23:11311
+```
+
 Then, run the system with:
 
 ```bash
