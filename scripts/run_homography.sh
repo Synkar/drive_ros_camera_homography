@@ -17,6 +17,7 @@ fi
 rocker $RENDERER  --x11 \
   --name drive_ros_camera_homograph \
   --network host \
+  --env ROS_MASTER_URI \
   --env-file $SCRIPT_DIR/.env \
   knowledgebase.datah.com.br:5000/synkar/delivery/autonomy:${HOMOGRAPHY_VERSION:-latest} \
   ${@:-"roslaunch drive_ros_camera_homography homography_estimator.launch"}
