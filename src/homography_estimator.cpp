@@ -334,6 +334,7 @@ void HomographyEstimator::computeTopView()
 
     topView2cam = world2cam * H;
     ROS_INFO_STREAM("topView2cam" << topView2cam);
+    ROS_INFO_STREAM("topView2cam_inv" << topView2cam.inv());
 }
 
 
